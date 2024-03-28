@@ -1,0 +1,19 @@
+body {
+    background: url('./bg.jpg') no-repeat center center fixed;
+    color: white;
+}
+
+.chessboard {
+    border-collapse: collapse;
+}
+
+.chessboard td {
+    width: 75px;
+    height: 75px;
+    text-align: center;
+    border: 1px solid white;
+}
+
+.queen {
+    font-size: 40px;
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N-Queens Visualization</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row mb-2 mt-2">
+            <div class="col-md-12">
+                <h1 class="text-center">N-Queens Visualization</h1>
+                <h4 class="text-center">Status: <span id="status-text" class="font-weight-bold text-primary">Idle</span>
+                </h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="delayInput">Delay (in milliseconds):</label>
+                    <input type="number" class="form-control" id="delayInput" value="500">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="queensInput">Number of Queens:</label>
+                    <input type="number" class="form-control" id="queensInput" value="4">
+                </div>
+            </div>
+        </div>
+        <div class="row ml-1">
+            <button class="btn btn-primary" id="solveButton">Start Solve</button>
+            <button class="ml-1 btn btn-success d-none" id="nextButton">Next Step</button>
+        </div>
+        <div class="row">
+            <div class="col-12 d-flex justify-content-center">
+                <table class="chessboard mt-5" id="chessboard"></table>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="./constants.js"></script>
+    <script src="./utils.js"></script>
+    <script src="./n-queens.js"></script>
+    <script>
+        function startSolve() {
+            $("#solveButton").text("Stop Solve");
+            $("#solveButton").toggleClass("btn-primary btn-danger");
+            $("#nextButton").removeClass("d-none");
+            $("#status-text").text("Solving...").addClass("text-danger").removeClass("text-success text-primary");
+            pausing = 0;
+        }
+
+        function activeStartButton() {
+            $("#solveButton").text("Start Solve");
+            $("#solveButton").toggleClass("btn-primary btn-danger");
+            $("#status-text").text("Idle").addClass("text-primary").removeClass("text-danger text-success");
+        }
+
+        function solveButtonHandler() {
+            if (pausing == -1) {
+                startSolve();
+
+                // Get delay and number of queens
+                let delay = parseInt($('#delayInput').val());
+                let numberOfQueens = parseInt($('#queensInput').val());
+
+                // Init board state
+                let board = initializeBoard(numberOfQueens || DEFAULT_NUMBER_OF_QUEENS);
+
+                // Solve N-Queens problem for a 4x4 chessboard, start with column 0
+                solveNQueensUtil(board, 0, delay)
+                    .then((checkSolution) => {
+                        if (!checkSolution) {
+                            alert("No solution found!");
+                            $("#status-text").text("No solution found!");
+                        } else {
+                            $("#status-text").text("Solution found!").addClass("text-success").removeClass("text-danger text-primary");
+                        }
+                        activeStartButton();
+                        pausing = -1;
+                        $("#chessboard").empty();
+                    });
+            } else if (pausing == 0) {
+                activeStartButton();
+                pausing = 1;
+            } else {
+                startSolve();
+            }
+        }
+
+        function nextButtonHandler() {
+            pausing = 0;
+            setTimeout(() => {
+                pausing = 1;
+            }, 100);
+        }
+
+        $('#solveButton').click(solveButtonHandler);
+        $("#nextButton").click(nextButtonHandler);
+    </script>
+</body>
+
+</html>
