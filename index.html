@@ -65,6 +65,7 @@
 
         function solveButtonHandler() {
             if (pausing == -1) {
+                $("#chessboard").empty();
                 startSolve();
 
                 // Get delay and number of queens
@@ -85,7 +86,7 @@
                         }
                         activeStartButton();
                         pausing = -1;
-                        $("#chessboard").empty();
+                        $("#nextButton").addClass("d-none");
                     });
             } else if (pausing == 0) {
                 activeStartButton();
